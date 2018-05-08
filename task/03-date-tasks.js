@@ -22,7 +22,7 @@
  *    'Sun, 17 May 1998 03:00:00 GMT+01' => Date()
  */
 function parseDataFromRfc2822(value) {
-    throw new Error('Not implemented');
+    return Date.parse(value);
 }
 
 /**
@@ -37,7 +37,7 @@ function parseDataFromRfc2822(value) {
  *    '2016-01-19T08:07:37Z' => Date()
  */
 function parseDataFromIso8601(value) {
-    throw new Error('Not implemented');
+    return Date.parse(value);
 }
 
 
@@ -56,7 +56,14 @@ function parseDataFromIso8601(value) {
  *    Date(2015,1,1)    => false
  */
 function isLeapYear(date) {
-    throw new Error('Not implemented');
+    if (date.getFullYear() % 4 != 0) 
+        return false;
+    else if (date.getFullYear() % 100 != 0)
+        return true;
+    else if(date.getFullYear() % 400 != 0)
+        return false;
+    else
+        return true;
 }
 
 
@@ -75,8 +82,18 @@ function isLeapYear(date) {
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,10,0,0,250)     => "00:00:00.250"
  *    Date(2000,1,1,10,0,0),  Date(2000,1,1,15,20,10,453)   => "05:20:10.453"
  */
+function parseTime(time, num)
+{
+    return time.length < num ? parseTime("0"+time, num):time
+}
+
 function timeSpanToString(startDate, endDate) {
-    throw new Error('Not implemented');
+    let resdate = endDate - startDate;
+    let hour = Math.floor(resdate/1000/60/60) + "";
+    let minute = Math.floor((resdate - hour*1000*60*60)/1000/60) + "";
+    let secund = Math.floor((resdate - hour*1000*60*60 - minute*1000*60)/1000) + "";
+    let msec = Math.floor(resdate - hour*1000*60*60 - minute*1000*60 - secund*1000) + "";
+    return parseTime(hour,2)+":"+parseTime(minute,2)+":"+parseTime(secund,2)+"."+parseTime(msec,3);
 }
 
 
@@ -94,7 +111,14 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
 function angleBetweenClockHands(date) {
-    throw new Error('Not implemented');
+    date = new Date(date)
+    
+    let mod = 0.5*(60*date.getUTCHours() + date.getUTCMinutes()) - 6*date.getUTCMinutes();
+    mod %= 360;
+    mod = mod < 0 ? mod + 360 : mod;
+    mod = mod > 180 ? 360 - mod : mod;
+    let r = mod * Math.PI / 180;
+    return r;
 }
 
 
