@@ -107,9 +107,11 @@ function getPolynom() {
  *   memoizer() => тоже рандомное число  (при всех последующих вызовах возвращается тоже закешированный результат)
  */
 function memoize(func) {
-  throw new Error('Not implemented');
+    var temp = func();
+    return function () {
+        return temp;
+    }
 }
-
 
 /**
  * Возвращает функцию, которая пытаеся вызвать переданную функцию, и,
@@ -126,7 +128,22 @@ function memoize(func) {
  * retryer() => 2
  */
 function retry(func, attempts) {
-    throw new Error('Not implemented');
+    var point = func;
+    var isCatch = false;
+    var countRepeat = attempts;
+    return function () {
+        do{
+            try{
+                if (isCatch)
+                    countRepeat--;
+                point();
+            }
+            catch (e){
+                isCatch = true;
+            }
+        }while(isCatch && countRepeat > 0);
+        return "expected";
+    }
 }
 
 
@@ -153,7 +170,21 @@ function retry(func, attempts) {
  *
  */
 function logger(func, logFunc) {
-    throw new Error('Not implemented');
+    var myFunc = func;
+    var myLogFunc = logFunc;
+    return function () {
+        var temp = JSON.stringify(arguments);
+        temp = temp.slice(1, temp.length - 1);
+        temp = temp.replace(/\".\":/gi, "");
+        myLogFunc(myFunc.name + "(" + temp+ ")" + " starts");
+        var qaz = myFunc;
+        if (arguments.length == 1)
+            var qaz =  myFunc(arguments[0]);
+        else
+            var qaz =  myFunc(arguments[0], arguments[1]);
+        myLogFunc(myFunc.name + "(" + temp + ")" + " ends");
+        return qaz;
+    }
 }
 
 
@@ -170,9 +201,15 @@ function logger(func, logFunc) {
  *   partialUsingArguments(fn, 'a','b','c','d')() => 'abcd'
  */
 function partialUsingArguments(fn) {
-    throw new Error('Not implemented');
+    var arr_1 = [];
+    for (let i = 1; i < arguments.length; i++)
+        arr_1.push(arguments[i]);
+   return function () {
+       for (let i = 0; i < arguments.length; i++)
+           arr_1.push(arguments[i]);
+        return fn(arr_1[0], arr_1[1], arr_1[2], arr_1[3]);
+   }
 }
-
 
 /**
  * Возвращает функцию IdGenerator, которая возвращает следующее целое число при каждом вызове начиная с переданного
